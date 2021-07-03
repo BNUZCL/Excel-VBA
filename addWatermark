@@ -1,0 +1,59 @@
+Dim arr1()
+Dim pdApp As Acrobat.acroApp
+Dim pdDoc As Acrobat.AcroPDDoc
+Dim pdPage As Acrobat.AcroPDPage
+Dim intPages As Integer
+Dim jso As Object
+Dim doc As Variant
+Dim oColor As Object
+Dim strpath As String
+
+    
+    
+Sub daoru()
+arr1 = Application.GetOpenFilename(",*.pdf", 2, "选择要添加水印的PDF文件", "确定", True)
+Set wb1 = ActiveWorkbook
+If arr1(1) <> "False" Then
+    For a = LBound(arr1) To UBound(arr1)
+    Range("A" & a + 1) = arr1(a)
+    Next
+End If
+
+
+End Sub
+
+Sub AddText()
+
+    Set pdApp = CreateObject("AcroExch.App")
+    Set pdDoc = CreateObject("AcroExch.PDDoc")
+Range("A1")="路径"
+Range("B1")="索引号"
+
+For a = 2 To Range("A65536").End(xlUp).Row
+
+    strpath = Range("A" & a).Value
+    pdDoc.Open (strpath)
+    
+    Set jso = pdDoc.GetJSObject
+    intPages = pdDoc.GetNumPages
+    
+        
+    For i = 1 To intPages
+        
+        Call jso.addWatermarkFromText(Range("B" & a) & "--" & i & "/" & intPages&"     ", jso.app.Constants.Align.Right, jso.Font.Helv, 20, jso.Color.Black, i - 1, i - 1, True, True, True, jso.app.Constants.Align.Right, jso.app.Constants.Align.Top, 0, 0, False, 1, False, 0, 1)
+    
+    Next
+        
+    
+    Call pdDoc.Save(1, strpath)
+
+    pdDoc.Close
+    
+Next
+    Set pdDoc = Nothing
+
+
+
+
+
+End Sub
